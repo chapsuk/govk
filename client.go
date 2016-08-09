@@ -44,6 +44,22 @@ func (c *Client) Auth() error {
 	return nil
 }
 
+// UserIsAppUser call user.isAppUser vk api method
+// return true if user install current app (by clientID)
+func (c *Client) UserIsAppUser(id int, token string) (bool, error) {
+	v := url.Values{}
+	v.Add("user_id", strconv.Itoa(id))
+	v.Add("access_token", token)
+
+	uri := buildURLForMethod("users.isAppUser", v)
+	var yep string
+	err := c.send(uri, &yep)
+	if yep == "1" {
+		return true, err
+	}
+	return false, err
+}
+
 // OrdersGet call order.get vk api method
 // size - max 1000, default 0
 // offset - default 0

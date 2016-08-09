@@ -8,6 +8,7 @@
 * [database.getCountries](https://new.vk.com/dev/database.getCountries)
 * [database.getCities](https://new.vk.com/dev/database.getCities)
 * [orders.get](https://new.vk.com/dev/orders.get)
+* [users.isAppUser](https://new.vk.com/dev/users.isAppUser)
 
 ## Run
 

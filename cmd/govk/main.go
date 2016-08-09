@@ -17,8 +17,10 @@ var (
 	// cmd
 	cmd = flag.String("cmd", "", "vk method name")
 	// params
-	offset = flag.Int("offset", 0, "offset param")
-	count  = flag.Int("count", 10, "count param")
+	offset      = flag.Int("offset", 0, "offset param")
+	count       = flag.Int("count", 1, "count param")
+	userID      = flag.Int("user", 0, "user_id")
+	accessToken = flag.String("access_token", "", "user access_token")
 	// database params
 	needAll   = flag.Bool("need-all", false, "database.getCountries needAll param")
 	code      = flag.String("code", "", "databse.getCountries code param")
@@ -43,7 +45,7 @@ func main() {
 		handleErr(err)
 		log.Printf("\nGotten access_token: %s", cli.AccessToken)
 	} else {
-		log.Print("\nWithout auth")
+		log.Print("\nWithout server auth")
 	}
 
 	r := make([]interface{}, *count)
@@ -69,6 +71,11 @@ func main() {
 			r[k] = v
 		}
 		printResult(*cmd, r)
+	case "users.isAppUser":
+		res, err := cli.UserIsAppUser(*userID, *accessToken)
+		handleErr(err)
+		r[0] = res
+		printResult(*cmd, r)
 	default:
 		handleErr(fmt.Errorf("undefined method"))
 	}
@@ -78,6 +85,8 @@ func needAuth(cmd string) bool {
 	switch cmd {
 	case "orders.get":
 		return true
+	case "users.isAppUser":
+		return false
 	case "database.getCountries", "database.getCities":
 		return false
 	default:
