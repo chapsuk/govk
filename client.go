@@ -69,17 +69,59 @@ func (c *Client) OrdersGet(count, offset int, test int) ([]OrderResponse, error)
 // all - if true return all countries
 func (c *Client) DatabaseGetCountries(count, offset int, all bool, code string) ([]CountryResponse, error) {
 	v := url.Values{}
-	v.Add("count", strconv.Itoa(count))
-	v.Add("offset", strconv.Itoa(offset))
+	if count > 0 {
+		v.Add("count", strconv.Itoa(count))
+	}
+	if offset > 0 {
+		v.Add("offset", strconv.Itoa(offset))
+	}
 	if all {
 		v.Add("need_all", "1")
 	} else {
 		v.Add("need_all", "0")
 	}
-	v.Add("code", code)
+	if code != "" {
+		v.Add("code", code)
+	}
 
 	uri := buildURLForMethod("database.getCountries", v)
 	res := []CountryResponse{}
+	err := c.send(uri, &res)
+	return res, err
+}
+
+// DatabaseGetCities call database.getCities vk api method
+// count - max 1000, default 100
+// offset - default 0
+// all - if false return only important
+// countryID - required param
+// regionID - optional
+// query - part of city name
+func (c *Client) DatabaseGetCities(count, offset int, all bool, countryID, regionID int, query string) ([]CityResponse, error) {
+	v := url.Values{}
+	if count > 0 {
+		v.Add("count", strconv.Itoa(count))
+	}
+	if offset > 0 {
+		v.Add("offset", strconv.Itoa(offset))
+	}
+	if all {
+		v.Add("need_all", "1")
+	} else {
+		v.Add("need_all", "0")
+	}
+	if countryID != 0 {
+		v.Add("country_id", strconv.Itoa(countryID))
+	}
+	if regionID != 0 {
+		v.Add("region_id", strconv.Itoa(regionID))
+	}
+	if query != "" {
+		v.Add("q", query)
+	}
+
+	uri := buildURLForMethod("database.getCities", v)
+	res := []CityResponse{}
 	err := c.send(uri, &res)
 	return res, err
 }

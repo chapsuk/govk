@@ -6,6 +6,7 @@
 
 * [authorization](https://new.vk.com/dev/secure_how_to)
 * [database.getCountries](https://new.vk.com/dev/database.getCountries)
+* [database.getCities](https://new.vk.com/dev/database.getCities)
 * [orders.get](https://new.vk.com/dev/orders.get)
 
 ## Run
@@ -66,4 +67,24 @@ Result database.getCountries method
 {ID:16 Title:Таджикистан}
 {ID:17 Title:Туркменистан}
 {ID:18 Title:Узбекистан}
+```
+
+database.getCities
+
+```
+$ govk -cmd database.getCities -count 10 -offset 0 -country 1
+2016/08/09 19:34:55
+Without auth
+2016/08/09 19:34:56
+Result database.getCities method
+{ID:1 Title:Москва Important:1}
+{ID:2 Title:Санкт-Петербург Important:1}
+{ID:10 Title:Волгоград Important:0}
+{ID:37 Title:Владивосток Important:0}
+{ID:153 Title:Хабаровск Important:0}
+{ID:49 Title:Екатеринбург Important:0}
+{ID:60 Title:Казань Important:0}
+{ID:61 Title:Калининград Important:0}
+{ID:72 Title:Краснодар Important:0}
+{ID:73 Title:Красноярск Important:0}
 ```

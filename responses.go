@@ -47,14 +47,15 @@ type OrderResponse struct {
 	Date       string `json:"date" db:"date"`
 }
 
-// CountriesResponse is contries list
-type CountriesResponse struct {
-	Count int               `json:"count"`
-	Items []CountryResponse `json:"items"`
-}
-
 // CountryResponse is country item
 type CountryResponse struct {
 	ID    int    `json:"cid" db:"id"`
 	Title string `json:"title" db:"title"`
+}
+
+// CityResponse is city item
+type CityResponse struct {
+	ID        int    `json:"cid" db:"id"`
+	Title     string `json:"title" db:"title"`
+	Important int    `json:"important"`
 }
