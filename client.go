@@ -48,9 +48,9 @@ func (c *Client) Auth() error {
 // size - max 1000, default 0
 // offset - default 0
 // test - 1 or 0, enable or disable test mode
-func (c *Client) OrdersGet(size, offset int, test int) ([]OrderResponse, error) {
+func (c *Client) OrdersGet(count, offset int, test int) ([]OrderResponse, error) {
 	v := url.Values{}
-	v.Add("count", strconv.Itoa(size))
+	v.Add("count", strconv.Itoa(count))
 	v.Add("offset", strconv.Itoa(offset))
 	v.Add("test_mode", strconv.Itoa(test))
 	v.Add("version", c.apiVersion)
@@ -58,6 +58,28 @@ func (c *Client) OrdersGet(size, offset int, test int) ([]OrderResponse, error) 
 
 	uri := buildURLForMethod("orders.get", v)
 	res := []OrderResponse{}
+	err := c.send(uri, &res)
+	return res, err
+}
+
+// DatabaseGetCountries call database.getCountries vk api method
+// count - max 1000, default 100
+// offset - default 0
+// code - "RU,UA,BY" for exampl
+// all - if true return all countries
+func (c *Client) DatabaseGetCountries(count, offset int, all bool, code string) ([]CountryResponse, error) {
+	v := url.Values{}
+	v.Add("count", strconv.Itoa(count))
+	v.Add("offset", strconv.Itoa(offset))
+	if all {
+		v.Add("need_all", "1")
+	} else {
+		v.Add("need_all", "0")
+	}
+	v.Add("code", code)
+
+	uri := buildURLForMethod("database.getCountries", v)
+	res := []CountryResponse{}
 	err := c.send(uri, &res)
 	return res, err
 }

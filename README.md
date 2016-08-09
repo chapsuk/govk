@@ -5,19 +5,21 @@
 ## API Methods
 
 * [authorization](https://new.vk.com/dev/secure_how_to)
+* [database.getCountries](https://new.vk.com/dev/database.getCountries)
 * [orders.get](https://new.vk.com/dev/orders.get)
 
 ## Run
 
 ```
-go install gthub.com/chapsuk/govk/cmd/govk
-``` 
+go install github.com/chapsuk/govk/cmd/govk
+```
+
 ## Example
 
 orders.get
 
 ```
- $ govk -c CLIENT_ID -s CLIENT_SECRET -i 20 -t 1
+ $ govk -c CLIENT_ID -s CLIENT_SECRET -cmd orders.get -count 20 -ogt 1
 2016/04/28 14:58:15
 Gotten access_token: ACCESS_TOKEN
 2016/04/28 14:58:15
@@ -36,4 +38,32 @@ Result orders.get method
 {ID:760405 AppOrderID:0 Status:charged UserID:4718705 ReceiverID:4718705 Item:premium_7#149855 Amount:25 Date:1425394741}
 {ID:378144 AppOrderID:0 Status:charged UserID:8182 ReceiverID:8182 Item:premium_1#4528709 Amount:10 Date:1386677299}
 {ID:41867 AppOrderID:0 Status:charged UserID:5499135 ReceiverID:5499135 Item:premium_7d Amount:10 Date:1351602715}
+```
+
+database.getCountries
+
+```
+$ govk -cmd database.getCountries -count 20
+2016/08/09 18:47:54
+Without auth
+2016/08/09 18:47:55
+Result database.getCountries method
+{ID:1 Title:Россия}
+{ID:2 Title:Украина}
+{ID:3 Title:Беларусь}
+{ID:4 Title:Казахстан}
+{ID:5 Title:Азербайджан}
+{ID:6 Title:Армения}
+{ID:7 Title:Грузия}
+{ID:8 Title:Израиль}
+{ID:9 Title:США}
+{ID:65 Title:Германия}
+{ID:11 Title:Кыргызстан}
+{ID:12 Title:Латвия}
+{ID:13 Title:Литва}
+{ID:14 Title:Эстония}
+{ID:15 Title:Молдова}
+{ID:16 Title:Таджикистан}
+{ID:17 Title:Туркменистан}
+{ID:18 Title:Узбекистан}
 ```
