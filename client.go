@@ -68,8 +68,7 @@ func (c *Client) UserIsAppUser(id int, token string) (bool, error) {
 // test - 1 or 0, enable or disable test mode
 func (c *Client) OrdersGet(count, offset int, test int) ([]OrderResponse, error) {
 	v := url.Values{}
-	v.Add("count", strconv.Itoa(count))
-	v.Add("offset", strconv.Itoa(offset))
+	setCountOffsetParams(&v, count, offset)
 	v.Add("test_mode", strconv.Itoa(test))
 	v.Add("access_token", c.AccessToken)
 
@@ -84,14 +83,9 @@ func (c *Client) OrdersGet(count, offset int, test int) ([]OrderResponse, error)
 // offset - default 0
 // code - "RU,UA,BY" for exampl
 // all - if true return all countries
-func (c *Client) DatabaseGetCountries(count, offset int, all bool, code string) ([]CountryResponse, error) {
+func (c *Client) DatabaseGetCountries(count, offset int, all bool, code string) (GetContriesResponse, error) {
 	v := url.Values{}
-	if count > 0 {
-		v.Add("count", strconv.Itoa(count))
-	}
-	if offset > 0 {
-		v.Add("offset", strconv.Itoa(offset))
-	}
+	setCountOffsetParams(&v, count, offset)
 	if all {
 		v.Add("need_all", "1")
 	} else {
@@ -104,7 +98,27 @@ func (c *Client) DatabaseGetCountries(count, offset int, all bool, code string) 
 	uri := c.buildURLForMethod("database.getCountries", v)
 	res := GetContriesResponse{}
 	err := c.send(uri, &res)
-	return res.Items, err
+	return res, err
+}
+
+// DatabseGetRegions call database.getRegions vk api method
+// query - part of region name
+func (c *Client) DatabseGetRegions(count, offset, country int, query string) (GetRegionsResponse, error) {
+	res := GetRegionsResponse{}
+	if country <= 0 {
+		return res, fmt.Errorf("country can`t be empty")
+	}
+
+	v := url.Values{}
+	setCountOffsetParams(&v, count, offset)
+	v.Add("country_id", strconv.Itoa(country))
+	if query != "" {
+		v.Add("q", query)
+	}
+
+	uri := c.buildURLForMethod("database.getRegions", v)
+	err := c.send(uri, &res)
+	return res, err
 }
 
 // DatabaseGetCities call database.getCities vk api method
@@ -114,14 +128,9 @@ func (c *Client) DatabaseGetCountries(count, offset int, all bool, code string) 
 // countryID - required param
 // regionID - optional
 // query - part of city name
-func (c *Client) DatabaseGetCities(count, offset int, all bool, countryID, regionID int, query string) ([]CityResponse, error) {
+func (c *Client) DatabaseGetCities(count, offset int, all bool, countryID, regionID int, query string) (GetCitiesResponse, error) {
 	v := url.Values{}
-	if count > 0 {
-		v.Add("count", strconv.Itoa(count))
-	}
-	if offset > 0 {
-		v.Add("offset", strconv.Itoa(offset))
-	}
+	setCountOffsetParams(&v, count, offset)
 	if all {
 		v.Add("need_all", "1")
 	} else {
@@ -140,7 +149,7 @@ func (c *Client) DatabaseGetCities(count, offset int, all bool, countryID, regio
 	uri := c.buildURLForMethod("database.getCities", v)
 	res := GetCitiesResponse{}
 	err := c.send(uri, &res)
-	return res.Items, err
+	return res, err
 }
 
 // DatabaseGetCitiesByID call database.getCitiesById vk api method
@@ -179,6 +188,15 @@ func (c *Client) send(uri string, r interface{}) error {
 		return fmt.Errorf("error: \"%s\" parse response, response:  \"%s\"", err.Error(), res.Response)
 	}
 	return nil
+}
+
+func setCountOffsetParams(v *url.Values, count, offset int) {
+	if count > 0 {
+		v.Add("count", strconv.Itoa(count))
+	}
+	if offset > 0 {
+		v.Add("offset", strconv.Itoa(offset))
+	}
 }
 
 func call(uri string, s interface{}) error {

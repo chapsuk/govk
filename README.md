@@ -8,6 +8,7 @@ Vk API version: `5.53`.
 
 * [authorization](https://new.vk.com/dev/secure_how_to)
 * [database.getCountries](https://new.vk.com/dev/database.getCountries)
+* [database.getRegions](https://new.vk.com/dev/database.getRegions)
 * [database.getCities](https://new.vk.com/dev/database.getCities)
 * [database.getCitiesById](https://new.vk.com/dev/database.getCitiesById)
 * [orders.get](https://new.vk.com/dev/orders.get)
@@ -104,4 +105,24 @@ Result database.getCitiesById method
 {ID:398 Title:Alexandrov}
 {ID:1 Title:Moscow}
 {ID:2 Title:Saint Petersburg}
+```
+
+database.getRegions
+
+```
+$ govk -cmd database.getRegions -count 10 -offset 0 -country 1
+2016/08/10 17:16:38
+Without server auth
+2016/08/10 17:16:38
+Result database.getRegions method
+{ID:1000001 Title:Адыгея}
+{ID:1121540 Title:Алтай}
+{ID:1121829 Title:Алтайский край}
+{ID:1123488 Title:Амурская область}
+{ID:1000236 Title:Архангельская область}
+{ID:1004118 Title:Астраханская область}
+{ID:1004565 Title:Башкортостан}
+{ID:1009404 Title:Белгородская область}
+{ID:1011109 Title:Брянская область}
+{ID:1124157 Title:Бурятия}
 ```

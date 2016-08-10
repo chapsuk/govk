@@ -38,7 +38,7 @@ var (
 func main() {
 	flag.Parse()
 
-	needAuth := needAuth(*cmd)
+	needAuth := needServerAuth(*cmd)
 	cli := govk.NewClient(*c, *s, version, *language)
 	if needAuth {
 		if *c == "" || *s == "" {
@@ -68,14 +68,21 @@ func main() {
 	case "database.getCountries":
 		res, err := cli.DatabaseGetCountries(*count, *offset, *needAll, *code)
 		handleErr(err)
-		for k, v := range res {
+		for k, v := range res.Items {
+			r[k] = v
+		}
+		printResult(*cmd, r)
+	case "database.getRegions":
+		res, err := cli.DatabseGetRegions(*count, *offset, *countryID, *query)
+		handleErr(err)
+		for k, v := range res.Items {
 			r[k] = v
 		}
 		printResult(*cmd, r)
 	case "database.getCities":
 		res, err := cli.DatabaseGetCities(*count, *offset, *needAll, *countryID, *regionID, *query)
 		handleErr(err)
-		for k, v := range res {
+		for k, v := range res.Items {
 			r[k] = v
 		}
 		printResult(*cmd, r)
@@ -96,13 +103,16 @@ func main() {
 	}
 }
 
-func needAuth(cmd string) bool {
+func needServerAuth(cmd string) bool {
 	switch cmd {
 	case "orders.get":
 		return true
 	case "users.isAppUser":
 		return false
-	case "database.getCountries", "database.getCities", "database.getCitiesById":
+	case "database.getCountries",
+		"database.getCities",
+		"database.getCitiesById",
+		"database.getRegions":
 		return false
 	default:
 		return false

@@ -59,6 +59,18 @@ type CountryResponse struct {
 	Title string `json:"title" db:"title"`
 }
 
+// GetRegionsResponse database.getRegions response
+type GetRegionsResponse struct {
+	Count int               `json:"count"`
+	Items []CountryResponse `json:"items"`
+}
+
+// RegionResponse region item
+type RegionResponse struct {
+	ID    int    `json:"id"`
+	Title string `json:"title"`
+}
+
 // GetCitiesResponse database.getCities response
 type GetCitiesResponse struct {
 	Count int            `json:"count"`
