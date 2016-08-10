@@ -15,30 +15,30 @@ var apiEndpointTpl = "https://api.vk.com/method/%s?%s"
 
 // Client to vk api
 type Client struct {
-	clientID     string
-	clientSecret string
-	apiVersion   string
+	ClientID     string
+	ClientSecret string
+	APIVersion   string
 	AccessToken  string
-	language     int
-	callFunc     func(uri string, s interface{}) error
+	Language     int
+	CallFunc     func(uri string, s interface{}) error
 }
 
 // NewClient yiled new Client structure
 func NewClient(id, secret, v string, lng int) *Client {
 	return &Client{
-		clientID:     id,
-		clientSecret: secret,
-		language:     lng,
-		apiVersion:   v,
-		callFunc:     call,
+		ClientID:     id,
+		ClientSecret: secret,
+		Language:     lng,
+		APIVersion:   v,
+		CallFunc:     call,
 	}
 }
 
 // Auth is call server authorization method and get access_token
 func (c *Client) Auth() error {
-	uri := fmt.Sprintf(authURLTpl, c.clientID, c.clientSecret, c.apiVersion)
+	uri := fmt.Sprintf(authURLTpl, c.ClientID, c.ClientSecret, c.APIVersion)
 	res := SuccessAuthResponse{}
-	err := c.callFunc(uri, &res)
+	err := c.CallFunc(uri, &res)
 	if err != nil {
 		return err
 	}
@@ -155,14 +155,14 @@ func (c *Client) DatabaseGetCitiesByID(ids string) ([]CityByIDResponse, error) {
 }
 
 func (c Client) buildURLForMethod(method string, p url.Values) string {
-	p.Add("v", c.apiVersion)
-	p.Add("lang", strconv.Itoa(c.language))
+	p.Add("v", c.APIVersion)
+	p.Add("lang", strconv.Itoa(c.Language))
 	return fmt.Sprintf(apiEndpointTpl, method, p.Encode())
 }
 
 func (c *Client) send(uri string, r interface{}) error {
 	res := VkResponse{}
-	err := c.callFunc(uri, &res)
+	err := c.CallFunc(uri, &res)
 	if err != nil {
 		return err
 	}
