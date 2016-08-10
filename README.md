@@ -2,11 +2,14 @@
 
 [![Build Status](https://travis-ci.org/chapsuk/govk.svg)](https://travis-ci.org/chapsuk/govk)
 
+Vk API version: `5.53`.
+
 ## API Methods
 
 * [authorization](https://new.vk.com/dev/secure_how_to)
 * [database.getCountries](https://new.vk.com/dev/database.getCountries)
 * [database.getCities](https://new.vk.com/dev/database.getCities)
+* [database.getCitiesById](https://new.vk.com/dev/database.getCitiesById)
 * [orders.get](https://new.vk.com/dev/orders.get)
 * [users.isAppUser](https://new.vk.com/dev/users.isAppUser)
 
@@ -88,4 +91,17 @@ Result database.getCities method
 {ID:61 Title:Калининград Important:0}
 {ID:72 Title:Краснодар Important:0}
 {ID:73 Title:Красноярск Important:0}
+```
+
+database.getCitiesById
+
+```
+$ go run cmd/govk/main.go  -cmd database.getCitiesById -lang 3 -city-ids "398,1,2"
+2016/08/10 16:29:31
+Without server auth
+2016/08/10 16:29:31
+Result database.getCitiesById method
+{ID:398 Title:Alexandrov}
+{ID:1 Title:Moscow}
+{ID:2 Title:Saint Petersburg}
 ```

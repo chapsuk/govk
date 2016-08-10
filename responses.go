@@ -47,15 +47,33 @@ type OrderResponse struct {
 	Date       string `json:"date" db:"date"`
 }
 
+// GetContriesResponse database.getCountries response
+type GetContriesResponse struct {
+	Count int               `json:"count"`
+	Items []CountryResponse `json:"items"`
+}
+
 // CountryResponse is country item
 type CountryResponse struct {
-	ID    int    `json:"cid" db:"id"`
+	ID    int    `json:"id" db:"id"`
 	Title string `json:"title" db:"title"`
+}
+
+// GetCitiesResponse database.getCities response
+type GetCitiesResponse struct {
+	Count int            `json:"count"`
+	Items []CityResponse `json:"items"`
 }
 
 // CityResponse is city item
 type CityResponse struct {
-	ID        int    `json:"cid" db:"id"`
+	ID        int    `json:"id" db:"id"`
 	Title     string `json:"title" db:"title"`
 	Important int    `json:"important"`
+}
+
+// CityByIDResponse city item
+type CityByIDResponse struct {
+	ID    int    `json:"id"`
+	Title string `json:"title"`
 }

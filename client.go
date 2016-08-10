@@ -19,14 +19,16 @@ type Client struct {
 	clientSecret string
 	apiVersion   string
 	AccessToken  string
+	language     int
 	callFunc     func(uri string, s interface{}) error
 }
 
 // NewClient yiled new Client structure
-func NewClient(id, secret, v string) *Client {
+func NewClient(id, secret, v string, lng int) *Client {
 	return &Client{
 		clientID:     id,
 		clientSecret: secret,
+		language:     lng,
 		apiVersion:   v,
 		callFunc:     call,
 	}
@@ -51,7 +53,7 @@ func (c *Client) UserIsAppUser(id int, token string) (bool, error) {
 	v.Add("user_id", strconv.Itoa(id))
 	v.Add("access_token", token)
 
-	uri := buildURLForMethod("users.isAppUser", v)
+	uri := c.buildURLForMethod("users.isAppUser", v)
 	var yep string
 	err := c.send(uri, &yep)
 	if yep == "1" {
@@ -69,10 +71,9 @@ func (c *Client) OrdersGet(count, offset int, test int) ([]OrderResponse, error)
 	v.Add("count", strconv.Itoa(count))
 	v.Add("offset", strconv.Itoa(offset))
 	v.Add("test_mode", strconv.Itoa(test))
-	v.Add("version", c.apiVersion)
 	v.Add("access_token", c.AccessToken)
 
-	uri := buildURLForMethod("orders.get", v)
+	uri := c.buildURLForMethod("orders.get", v)
 	res := []OrderResponse{}
 	err := c.send(uri, &res)
 	return res, err
@@ -100,10 +101,10 @@ func (c *Client) DatabaseGetCountries(count, offset int, all bool, code string) 
 		v.Add("code", code)
 	}
 
-	uri := buildURLForMethod("database.getCountries", v)
-	res := []CountryResponse{}
+	uri := c.buildURLForMethod("database.getCountries", v)
+	res := GetContriesResponse{}
 	err := c.send(uri, &res)
-	return res, err
+	return res.Items, err
 }
 
 // DatabaseGetCities call database.getCities vk api method
@@ -136,13 +137,26 @@ func (c *Client) DatabaseGetCities(count, offset int, all bool, countryID, regio
 		v.Add("q", query)
 	}
 
-	uri := buildURLForMethod("database.getCities", v)
-	res := []CityResponse{}
+	uri := c.buildURLForMethod("database.getCities", v)
+	res := GetCitiesResponse{}
+	err := c.send(uri, &res)
+	return res.Items, err
+}
+
+// DatabaseGetCitiesByID call database.getCitiesById vk api method
+func (c *Client) DatabaseGetCitiesByID(ids string) ([]CityByIDResponse, error) {
+	v := url.Values{}
+	v.Add("city_ids", ids)
+
+	uri := c.buildURLForMethod("database.getCitiesById", v)
+	res := []CityByIDResponse{}
 	err := c.send(uri, &res)
 	return res, err
 }
 
-func buildURLForMethod(method string, p url.Values) string {
+func (c Client) buildURLForMethod(method string, p url.Values) string {
+	p.Add("v", c.apiVersion)
+	p.Add("lang", strconv.Itoa(c.language))
 	return fmt.Sprintf(apiEndpointTpl, method, p.Encode())
 }
 

@@ -6,17 +6,20 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/chapsuk/govk"
 )
 
 var (
+	version = "5.53"
+	// server credentials
 	c = flag.String("c", "", "is client_id of vk application")
 	s = flag.String("s", "", "is secret of vk application")
-	v = flag.String("v", "5.53", "vk api version")
 	// cmd
 	cmd = flag.String("cmd", "", "vk method name")
 	// params
+	language    = flag.Int("lang", 0, "response language")
 	offset      = flag.Int("offset", 0, "offset param")
 	count       = flag.Int("count", 1, "count param")
 	userID      = flag.Int("user", 0, "user_id")
@@ -27,6 +30,7 @@ var (
 	countryID = flag.Int("country", 1, "database.getCities country_id param")
 	regionID  = flag.Int("region", 0, "database.getCities region_id param")
 	query     = flag.String("query", "", "database.getCities q param")
+	cityIds   = flag.String("city-ids", "", "database.getCitiesById city_ids param")
 	// orders.get params
 	ogt = flag.Int("ogt", 0, "orders.get enable test_mode")
 )
@@ -35,7 +39,7 @@ func main() {
 	flag.Parse()
 
 	needAuth := needAuth(*cmd)
-	cli := govk.NewClient(*c, *s, *v)
+	cli := govk.NewClient(*c, *s, version, *language)
 	if needAuth {
 		if *c == "" || *s == "" {
 			flag.PrintDefaults()
@@ -46,6 +50,10 @@ func main() {
 		log.Printf("\nGotten access_token: %s", cli.AccessToken)
 	} else {
 		log.Print("\nWithout server auth")
+	}
+
+	if *cityIds != "" && *count == 1 {
+		*count = len(strings.Split(*cityIds, ","))
 	}
 
 	r := make([]interface{}, *count)
@@ -71,6 +79,13 @@ func main() {
 			r[k] = v
 		}
 		printResult(*cmd, r)
+	case "database.getCitiesById":
+		res, err := cli.DatabaseGetCitiesByID(*cityIds)
+		handleErr(err)
+		for k, v := range res {
+			r[k] = v
+		}
+		printResult(*cmd, r)
 	case "users.isAppUser":
 		res, err := cli.UserIsAppUser(*userID, *accessToken)
 		handleErr(err)
@@ -87,7 +102,7 @@ func needAuth(cmd string) bool {
 		return true
 	case "users.isAppUser":
 		return false
-	case "database.getCountries", "database.getCities":
+	case "database.getCountries", "database.getCities", "database.getCitiesById":
 		return false
 	default:
 		return false
