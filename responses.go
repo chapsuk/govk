@@ -55,8 +55,8 @@ type GetContriesResponse struct {
 
 // CountryResponse is country item
 type CountryResponse struct {
-	ID    int    `json:"id" db:"id"`
-	Title string `json:"title" db:"title"`
+	ID    int    `json:"id"`
+	Title string `json:"title"`
 }
 
 // GetRegionsResponse database.getRegions response
@@ -79,8 +79,10 @@ type GetCitiesResponse struct {
 
 // CityResponse is city item
 type CityResponse struct {
-	ID        int    `json:"id" db:"id"`
-	Title     string `json:"title" db:"title"`
+	ID        int    `json:"id"`
+	Title     string `json:"title"`
+	Area      string `json:"area"`
+	Region    string `json:"region"`
 	Important int    `json:"important"`
 }
 
