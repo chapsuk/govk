@@ -20,7 +20,7 @@ type Client struct {
 	APIVersion   string
 	AccessToken  string
 	Language     int
-	CallFunc     func(uri string, s interface{}) error
+	HTTPClient   *http.Client
 }
 
 // NewClient yiled new Client structure
@@ -30,7 +30,9 @@ func NewClient(id, secret, v string, lng int) *Client {
 		ClientSecret: secret,
 		Language:     lng,
 		APIVersion:   v,
-		CallFunc:     call,
+		HTTPClient: &http.Client{
+			Transport: &http.Transport{},
+		},
 	}
 }
 
@@ -38,7 +40,7 @@ func NewClient(id, secret, v string, lng int) *Client {
 func (c *Client) Auth() error {
 	uri := fmt.Sprintf(authURLTpl, c.ClientID, c.ClientSecret, c.APIVersion)
 	res := SuccessAuthResponse{}
-	err := c.CallFunc(uri, &res)
+	err := c.call(uri, &res)
 	if err != nil {
 		return err
 	}
@@ -171,7 +173,7 @@ func (c Client) buildURLForMethod(method string, p url.Values) string {
 
 func (c *Client) send(uri string, r interface{}) error {
 	res := VkResponse{}
-	err := c.CallFunc(uri, &res)
+	err := c.call(uri, &res)
 	if err != nil {
 		return err
 	}
@@ -190,17 +192,12 @@ func (c *Client) send(uri string, r interface{}) error {
 	return nil
 }
 
-func setCountOffsetParams(v *url.Values, count, offset int) {
-	if count > 0 {
-		v.Add("count", strconv.Itoa(count))
+func (c *Client) call(uri string, s interface{}) error {
+	req, err := http.NewRequest("GET", uri, nil)
+	if err != nil {
+		return err
 	}
-	if offset > 0 {
-		v.Add("offset", strconv.Itoa(offset))
-	}
-}
-
-func call(uri string, s interface{}) error {
-	r, err := http.Get(uri)
+	r, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return err
 	}
@@ -210,6 +207,15 @@ func call(uri string, s interface{}) error {
 		return makeHTTPErrorResponse(r.Body)
 	}
 	return json.NewDecoder(r.Body).Decode(s)
+}
+
+func setCountOffsetParams(v *url.Values, count, offset int) {
+	if count > 0 {
+		v.Add("count", strconv.Itoa(count))
+	}
+	if offset > 0 {
+		v.Add("offset", strconv.Itoa(offset))
+	}
 }
 
 func makeHTTPErrorResponse(r io.Reader) error {
